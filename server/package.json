@@ -1,0 +1,33 @@
+{
+  "name": "chronos_api",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "API for Chronos system",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "nodemon server",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma",
+    "seed": "tsx src/prisma/seed.ts"
+  },
+  "author": "Chrono Julcarl Selma",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "tsconfig-paths": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.3",
+    "nodemon": "^3.1.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  }
+}
