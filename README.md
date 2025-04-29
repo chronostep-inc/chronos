@@ -1,4 +1,8 @@
-# Fullstack React 19 + Express + Prisma Project
+# Employee management system
+
+A basic CRUD operation to display the hierarchy of employees in Chronostep, Inc., showing each employee's name, photo, and current position
+
+## Fullstack React 19 + Express + Prisma Project
 
 This is a fullstack web application built with **React 19** on the frontend and **Express.js** with **Prisma ORM** on the backend. It provides a robust, modern web stack for building scalable and maintainable applications.
 
