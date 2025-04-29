@@ -3,8 +3,8 @@ import { Employee } from "../../../../server/src/interfaces/employee"
 import { FaTrashAlt } from "react-icons/fa"; 
 
 
-const CardImage = ({employee}:{employee: Employee}) => {
-  const {handleDelete} = useAppContext()
+const CardImage = ({employee, type}:{employee: Employee, type: number}) => {
+  const {handleDelete, handlePreview} = useAppContext()
   
   return (
     <div className='relative flex flex-col items-center text-center whitespace-nowrap'>
@@ -16,7 +16,7 @@ const CardImage = ({employee}:{employee: Employee}) => {
         <FaTrashAlt className="text-red-500" />
       </button>
 
-      <img src={employee.image_url} alt={employee.name} className='w-20 h-20 rounded-full object-cover border border-gray-500' />
+      <img onClick={() => handlePreview(type, employee.id)} src={employee.image_url} alt={employee.name} className='cursor-pointer w-20 h-20 rounded-full object-cover border border-gray-500' />
       <h4 className='mt-2 bold'>{employee.name}</h4>
       <span className='text-sm'>{employee.role.name}</span>
     </div>

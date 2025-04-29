@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
+import { toast } from 'react-toastify';
 
 import { Employee } from '../../../server/src/interfaces/employee'
 import { Role } from '../../../server/src/interfaces/roles'
@@ -22,6 +23,10 @@ interface AppContextType {
   handleSubmit: (e: React.FormEvent) => Promise<void>
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleDelete: (employeeId: number) => Promise<void>
+  handlePreview: (employeeType: number, employeeId: number) => void
+  openNewModal: () => void
+  employeeIdToEdit: number | null,
+  selectedEmployee: Employee | null
 }
 
 const AppContext = createContext<AppContextType>({
@@ -40,21 +45,38 @@ const AppContext = createContext<AppContextType>({
   handleSubmit: async (e: React.FormEvent) => {},
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => {},
   handleDelete: async (employeeId: number) => {},
+  handlePreview: (employeeType: number, employeeId: number) => {},
+  openNewModal: () => {},
+  employeeIdToEdit: null,
+  selectedEmployee: null
 })
 
 const AppContextProvider = ({children}: {children: React.ReactNode}) => {
   const [groupedEmployees, setGroupedEmployees] = useState<Record<number, Employee[]>>([])
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
   const [modalIsOpen, setIsOpen] = useState(false)
   const [isProcessed, setIsProcessed] = useState(false)
   const [roles, setRoles] = useState<Role[]>([])
   const [rolesCopy, setRolesCopy] = useState<Role[]>([])
   const [preview, setPreview] = useState<string | null>(null)
+  const [employeeIdToEdit, setEmployeeIdToEdit] = useState<number | null>(null)
   const [form, setForm] = useState({
     name: '',
     role: '',
     photo: '',
   })
   const openModal = () => setIsOpen(true)
+  const openNewModal = () => {
+    setEmployeeIdToEdit(null)
+    setSelectedEmployee(null)
+    setForm({
+      name: '',
+      role: '',
+      photo: '',
+    })
+    setPreview(null)
+    setIsOpen(true)
+  }
   const closeModal = () => setIsOpen(false)
 
   const getEmployees = async () => {
@@ -106,6 +128,26 @@ const AppContextProvider = ({children}: {children: React.ReactNode}) => {
     }
   }
 
+  const saveChanges = async (bodyRequest: string) => {
+    return await fetch('/api/employee', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: bodyRequest
+    })
+  }
+
+  const updateChanges = async (bodyRequest: string) => {
+    return await fetch(`/api/employee/${employeeIdToEdit}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: bodyRequest
+    })
+  }
+
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setIsProcessed(true)
@@ -114,14 +156,8 @@ const AppContextProvider = ({children}: {children: React.ReactNode}) => {
       role_id: form.role,
       image_url: form.photo
     })
-    const response = await fetch('/api/employee', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: bodyRequest
-    })
-    await response.json()
+    const response = employeeIdToEdit ? await updateChanges(bodyRequest) : await saveChanges(bodyRequest)
+    const result = await response.json()
     setIsProcessed(false)
     setForm({
       name: '',
@@ -130,14 +166,17 @@ const AppContextProvider = ({children}: {children: React.ReactNode}) => {
     })
     setPreview(null)
     closeModal()
+    toast(result.message)
   }, [form])
   
   const handleDelete = async (employeeId: number) => {
     setIsProcessed(true)
-    await fetch(`/api/employee/${employeeId}`, {
+    const response = await fetch(`/api/employee/${employeeId}`, {
       method: "DELETE",
     })
+    const result = await response.json()
     
+    toast(result.message)
     setIsProcessed(false)
   }
 
@@ -146,6 +185,24 @@ const AppContextProvider = ({children}: {children: React.ReactNode}) => {
     const result = await response.json();
 
     setRolesCopy(result)
+  }
+
+  const handlePreview = (employeeType: number, employeeId: number) => {
+    const result = groupedEmployees[employeeType]
+    const employeeInArray = result.filter((item: Employee) => item.id === employeeId)
+    const employee = employeeInArray.length > 0 ? employeeInArray[0] : null
+    if (employee) {
+      setEmployeeIdToEdit(employeeId)
+      setSelectedEmployee(employee)
+      setForm((prevState) => ({
+        ...prevState,
+        name: employee.name,
+        role: (employee.role.id).toString(),
+        photo: employee.image_url,
+      }))
+      openModal()
+      setPreview(employee.image_url)
+    }
   }
 
   useEffect(() => {
@@ -191,6 +248,10 @@ const AppContextProvider = ({children}: {children: React.ReactNode}) => {
       handleSubmit,
       handlePhotoChange,
       handleDelete,
+      handlePreview,
+      openNewModal,
+      employeeIdToEdit,
+      selectedEmployee,
     }
   }, [
     groupedEmployees,
@@ -198,6 +259,8 @@ const AppContextProvider = ({children}: {children: React.ReactNode}) => {
     roles,
     preview,
     form,
+    employeeIdToEdit,
+    selectedEmployee,
   ])
   return (
     <AppContext.Provider value={value}>{children}</AppContext.Provider>

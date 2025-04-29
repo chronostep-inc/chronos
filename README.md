@@ -9,7 +9,8 @@ This is a fullstack web application built with **React 19** on the frontend and 
 - [React 19](https://reactjs.org/)
 - [Vite](https://vitejs.dev/)&#x20;
 - [React Router](https://reactrouter.com/)&#x20;
-- [Tailwind CSS](https://tailwindcss.com/) or your preferred CSS framework
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React toastify](https://www.npmjs.com/package/react-toastify)
 
 ### Server
 

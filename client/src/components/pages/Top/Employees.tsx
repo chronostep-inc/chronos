@@ -37,7 +37,7 @@ const Employees = ({groupedEmployees}: {
         return (
           <div key={`${index}-${employees.length}`} className={className}>
             {employees.map((employee: Employee) => (
-              <CardImage key={employee.id} employee={employee}/>
+              <CardImage key={employee.id} employee={employee} type={index}/>
             ))}
           </div>
         )

@@ -1,7 +1,7 @@
 import '@/css/Top.css'
 import Header from '~/components/pages/Top/Header'
 import Employees from '~/components/pages/Top/Employees'
-import AddEmployee from '~/components/pages/Top/AddEmployee'
+import AddEditEmployee from '~/components/pages/Top/AddEditEmployee'
 import { useAppContext } from '~/context/AppContextProvider'
 
 
@@ -11,7 +11,7 @@ const Top = () => {
   return (
     <div className='container mx-auto max-w-screen-xl p-4'>
       <Header />
-      <AddEmployee />
+      <AddEditEmployee />
       <Employees groupedEmployees={groupedEmployees}/>
     </div>
   )

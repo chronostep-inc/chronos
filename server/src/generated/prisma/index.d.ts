@@ -3368,6 +3368,7 @@ export namespace Prisma {
 
   export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    name_role_id?: EmployeeNameRole_idCompoundUniqueInput
     AND?: EmployeeWhereInput | EmployeeWhereInput[]
     OR?: EmployeeWhereInput[]
     NOT?: EmployeeWhereInput | EmployeeWhereInput[]
@@ -3377,7 +3378,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Employee"> | Date | string
     updatedAt?: DateTimeFilter<"Employee"> | Date | string
     role?: XOR<RoleScalarRelationFilter, RoleWhereInput>
-  }, "id">
+  }, "id" | "name_role_id">
 
   export type EmployeeOrderByWithAggregationInput = {
     id?: SortOrder
@@ -3619,6 +3620,11 @@ export namespace Prisma {
   export type RoleScalarRelationFilter = {
     is?: RoleWhereInput
     isNot?: RoleWhereInput
+  }
+
+  export type EmployeeNameRole_idCompoundUniqueInput = {
+    name: string
+    role_id: number
   }
 
   export type EmployeeCountOrderByAggregateInput = {

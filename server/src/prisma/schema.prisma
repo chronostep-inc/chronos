@@ -29,4 +29,6 @@ model Employee {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   role      Role     @relation(fields: [role_id], references: [id])
+
+  @@unique([name, role_id])
 }

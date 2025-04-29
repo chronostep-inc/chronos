@@ -17,8 +17,17 @@ export const saveEmployee = async ({
     if (!role) {
       throw new Error(`Role with id ${roleId} not found`);
     }
-    return await prisma.employee.create({
-      data: {
+    return await prisma.employee.upsert({
+      where: {
+        name_role_id: {
+          name: name,
+          role_id: role.id,
+        }
+      },
+      update: image_url  ? {
+        image_url: image_url
+      } : {},
+      create: {
         name: name,
         role_id: role.id,
         image_url: image_url
@@ -36,6 +45,46 @@ export const getEmployees = async () => {
     return await prisma.employee.findMany({
       include: {
         role: true
+      }
+    })
+  } catch (error) {
+    console.error('Error pulling all employee', error)
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
+export const updateEmployee = async ({
+  id,
+  name,
+  roleId,
+  image_url,
+} : {
+  id: Number,
+  name: string
+  roleId: number
+  image_url: string
+}) => {
+  try {
+    const role = await prisma.role.findUnique({
+      where: { id: roleId },
+    });
+
+    if (!role) {
+      throw new Error(`Role with id ${roleId} not found`);
+    }
+
+    return await prisma.employee.update({
+      where: {
+        id: parseInt(`${id}`),
+      },
+      data: image_url ? {
+        name: name,
+        role_id: role.id,
+        image_url: image_url
+      } : {
+        name: name,
+        role_id: role.id,
       }
     })
   } catch (error) {
