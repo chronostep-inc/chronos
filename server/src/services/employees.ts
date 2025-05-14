@@ -1,5 +1,6 @@
 import { deleteEmployee, getEmployees, saveEmployee, updateEmployee } from "@/repositories/employees";
 import { Router } from "express";
+import { authJWT } from "@/middleware/auth";
 
 const router = Router()
 
@@ -13,7 +14,7 @@ router.get('/employee', async (request, response) => {
   }
 })
 
-router.post('/employee', async (request, response) => {
+router.post('/employee', authJWT, async (request, response) => {
   try {
       const {name, role_id, image_url} = request.body
       const employee = await saveEmployee({
@@ -31,7 +32,7 @@ router.post('/employee', async (request, response) => {
   }
 })
 
-router.put('/employee/:id', async (request, response) => {
+router.put('/employee/:id', authJWT, async (request, response) => {
   try {
     const {id} = request.params
     const {name, role_id, image_url} = request.body
@@ -51,7 +52,7 @@ router.put('/employee/:id', async (request, response) => {
 }
 })
 
-router.delete('/employee/:id', async (request, response) => {
+router.delete('/employee/:id', authJWT, async (request, response) => {
   try {
       const {id} = request.params
       const employee = await deleteEmployee({

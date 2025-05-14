@@ -5,6 +5,8 @@ import cors from 'cors'
 import { prisma } from '@/prismaClient';
 import rolesServices from '@/services/roles'
 import employeServices from '@/services/employees'
+import authService from '@/services/auth'
+import cookieParser from 'cookie-parser'
 
 dotenv.config();
 
@@ -17,9 +19,13 @@ const routePrefix = '/api/'
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+// Middleware to parse cookie
+app.use(cookieParser())
+
 // For cors policy issue
 app.use(cors())
 
+app.use(`${routePrefix}`, authService)
 app.use(`${routePrefix}`, rolesServices)
 app.use(`${routePrefix}`, employeServices)
 
